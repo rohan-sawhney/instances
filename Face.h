@@ -17,6 +17,9 @@ public:
     // returns normal to face
     Eigen::Vector3d normal() const;
     
+    // returns signed volume
+    double signedVolume() const;
+    
     // flag for submesh creation
     bool seen;
 };

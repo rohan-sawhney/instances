@@ -104,38 +104,12 @@ std::vector<Mesh> Mesh::generateSubmeshesEdgeApproach()
     return meshes;
 }
 
-double signedVolume(const Eigen::Vector3d& p1, const Eigen::Vector3d& p2, const Eigen::Vector3d& p3)
-{
-    double v321 = p3.x() * p2.y() * p1.z();
-    double v231 = p2.x() * p3.y() * p1.z();
-    double v312 = p3.x() * p1.y() * p2.z();
-    double v132 = p1.x() * p3.y() * p2.z();
-    double v213 = p2.x() * p1.y() * p3.z();
-    double v123 = p1.x() * p2.y() * p3.z();
-    
-    return (-v321 + v231 + v312 - v132 - v213 + v123) / 6.0;
-}
-
-double triArea(const Eigen::Vector3d& p1, const Eigen::Vector3d& p2, const Eigen::Vector3d& p3)
-{
-    return ((p1 - p2).cross(p3 - p2)).norm() / 2.0;
-}
-
 void Mesh::computeFeatures()
 {
     for (FaceCIter f = faces.begin(); f != faces.end(); f++) {
         
-        HalfEdgeCIter he = f->he;
-        VertexIter v1 = he->vertex;
-        
-        he = he->next;
-        VertexIter v2 = he->vertex;
-        
-        he = he->next;
-        VertexIter v3 = he->vertex;
-     
-        volume += signedVolume(v1->position, v2->position, v3->position);
-        surfaceArea += triArea(v1->position, v2->position, v3->position);
+        volume += f->signedVolume();
+        surfaceArea += f->area();
     }
     
     volume = fabs(volume);
